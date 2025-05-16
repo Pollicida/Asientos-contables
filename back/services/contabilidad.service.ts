@@ -159,10 +159,10 @@ export const generarBalanzaDeComprobacion = (fecha: string, mayor: LibroMayor): 
 };
 
 const esActivo = (concepto: string) =>
-  ["caja", "banco", "maquinaria", "terreno", "edificio", "clientes", "inventario", "materia prima", "materia en proceso", "producto terminado", "papelería", "pagos anticipados", "rentas pagadas x anticipado"]
+  ["iva acreditable", "caja", "banco", "maquinaria", "terreno", "edificio", "clientes", "inventario",  "iva por acreditar", "materia prima", "materia en proceso", "producto terminado", "papelería", "pagos anticipados", "rentas pagadas por anticipado"]
     .some(c => concepto.toLowerCase().includes(c));
 const esPasivo = (concepto: string) =>
-  ["acreedores", "proveedores", "documentos por pagar", "anticipo cliente", "iva trasladado", "iva por acreditar", "iva x trasladar"]
+  ["acreedores", "proveedores", "documentos por pagar", "anticipo cliente", "iva trasladado", "iva x trasladar"]
     .some(c => concepto.toLowerCase().includes(c));
 const esCapital = (concepto: string) =>
   ["capital", "utilidad del ejercicio", "ventas", "costos", "gastos"]

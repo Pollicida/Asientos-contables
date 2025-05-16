@@ -2,7 +2,7 @@ import { BalanceType } from "../types/BalanceType";
 
 const BalanceGeneralComponent= ({balance, fecha}:{balance: BalanceType, fecha:string}) => {
 	
-	console.log("balanceGeneral en el componente Balance", fecha);
+	console.log("balanceGeneral en el componente Balance", balance.totalCapital);
 	// Obtener la longitud máxima entre los tres arreglos
 	const maxLength = Math.max(
 		balance.detalle.activos.length,
@@ -45,7 +45,7 @@ const BalanceGeneralComponent= ({balance, fecha}:{balance: BalanceType, fecha:st
 								{balance.detalle.pasivos[index]?.concepto || ""}
 							</td>
 							<td className="border border-gray-300 p-2">
-								{balance.detalle.pasivos[index]?.valor.toLocaleString() || ""}
+								{balance.detalle.pasivos[index]?.valor ? (-balance.detalle.pasivos[index]?.valor).toLocaleString() || "" : ""}
 							</td>
 
 							{/* Capital */}
@@ -53,7 +53,7 @@ const BalanceGeneralComponent= ({balance, fecha}:{balance: BalanceType, fecha:st
 								{balance.detalle.capital[index]?.concepto || ""}
 							</td>
 							<td className="border border-gray-300 p-2">
-								{-balance.detalle.capital[index]?.valor.toLocaleString() || ""}
+								{balance.detalle.capital[index]?.valor ? (-balance.detalle.capital[index]?.valor).toLocaleString() || "" : ""}
 							</td>
 						</tr>
 					))}
@@ -69,13 +69,13 @@ const BalanceGeneralComponent= ({balance, fecha}:{balance: BalanceType, fecha:st
 						{/* Total Pasivos */}
 						<td className="border border-gray-300 p-2">Total Pasivos</td>
 						<td className="border border-gray-300 p-2 text-right">
-							${balance.totalPasivos.toLocaleString()}
+							${(-balance.totalPasivos).toLocaleString()}
 						</td>
 
 						{/* Total Capital */}
 						<td className="border border-gray-300 p-2">Total Capital</td>
 						<td className="border border-gray-300 p-2 text-right">
-							${-balance.totalCapital.toLocaleString()}
+							${(-balance.totalCapital).toLocaleString()}
 						</td>
 					</tr>
 					<tr className="font-semibold">
@@ -84,7 +84,7 @@ const BalanceGeneralComponent= ({balance, fecha}:{balance: BalanceType, fecha:st
 						{/* Total Pasivos */}
 						<td className="border border-gray-300 p-2">Total Pasivos + Capital</td>
 						<td className="border border-gray-300 p-2 text-right">
-							${-(balance.totalPasivos + balance.totalCapital) .toLocaleString()}
+							${(-(balance.totalPasivos + balance.totalCapital)).toLocaleString()}
 						</td>
 						<td className="border border-gray-300 p-2" colSpan={2}></td>
 					</tr>
