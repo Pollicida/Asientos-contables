@@ -1,8 +1,19 @@
 import { Request, Response, Router } from "express";
 import { body, validationResult } from "express-validator";
 import { generarYGuardarEstados } from "../controllers/generarEstados.controller";
+import { obtenerUltimoEstado } from "../controllers/obtenerEstados.controller";
+import { obtenerUltimosAsientosDeTodosLosEstados } from "../controllers/obtenerEstados.controller";
+import { obtenerEstadoPorId } from "../controllers/obtenerEstados.controller";
 
 const router = Router();
+
+router.get("/ultimoEstado", obtenerUltimoEstado);
+
+router.get("/ultimosEstados", async (req: Request, res: Response) => {
+  await obtenerUltimosAsientosDeTodosLosEstados(req, res);
+});
+
+router.get("/estado/:id", obtenerEstadoPorId);
 
 router.post(
   "/postAsiento",
