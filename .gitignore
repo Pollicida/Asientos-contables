@@ -1,0 +1,10 @@
+/back/package-lock.json
+/back/node_modules
+/back/dist
+/back/.env
+
+/front/.gitignore
+/front/node_modules
+/front/dist
+/front/.env
+/front/package-lock.json
