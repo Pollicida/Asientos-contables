@@ -1,50 +1,43 @@
-import EstadoContable from "../models/Estado.model";
-import generarEstadosContables from "../services/contabilidad.service";
 import { Request, Response } from "express";
+import EstadoContable from "../models/Estado.model";
+import generarEstadosContables, { AsientoContable } from "../services/contabilidad.service";
 
+// POST /api/generar-estados
 export const generarYGuardarEstados = async (req: Request, res: Response) => {
   try {
-    const { asiento } = req.body;
+    const { fecha, asiento } = req.body;
 
-    if (!asiento) {
-      return res.status(400).json({ error: "Faltan datos: Asiento" });
+    if (!fecha || !asiento) {
+      return res.status(400).json({ error: "Faltan datos: fecha o asiento" });
     }
 
-    // 1. Obtener todos los estados contables previos de la BD ordenados por fecha (ascendente)
-    const estadosPrevios = await EstadoContable.find().sort({ fecha: 1 });
+    // ✅ Obtener el último estado contable (usando _id para ordenar por creación)
+    const ultimoEstado = await EstadoContable.findOne().sort({ fecha: -1 }).lean();
 
-    // 2. Extraer todos los asientos previos desde el libroDiario de cada estado
-    const asientosPrevios = estadosPrevios.flatMap((estado) =>
-      estado.libroDiario.map((entry) => ({
-        fecha: entry.fecha,
-        descripcion: entry.descripcion,
-        movimientos: entry.partidas.map((p) => ({
-          cuenta: p.cuenta,
-          debe: p.debe,
-          haber: p.haber,
-        })),
+    // ✅ Extraer asientos solo del último estado (si existe)
+    const asientosPrevios: AsientoContable[] = ultimoEstado?.libroDiario.map(entry => ({
+      fecha: entry.fecha,
+      descripcion: entry.descripcion,
+      movimientos: entry.partidas.map(p => ({
+        cuenta: p.cuenta,
+        debe: p.debe,
+        haber: p.haber
       }))
-    );
-    // 3. Combinar todos los asientos previos con el nuevo asiento recibido
-    const asientosCompletos = [...asientosPrevios, asiento];
+    })) || [];
 
-    // 4. Generar todos los estados contables (pasar la fecha del nuevo asiento y todos los asientos)
-    const estados = generarEstadosContables(asiento.fecha, asientosCompletos);
+    // ➕ Añadir el nuevo asiento
+    const todosLosAsientos = [...asientosPrevios, asiento];
 
-    // 5. Guardar el nuevo estado completo en la BD
-    const nuevoDocumento = new EstadoContable({
-      fecha: asiento.fecha,
-      libroDiario: estados.libroDiario,
-      libroMayor: estados.libroMayor,
-      balanzaDeComprobacion: estados.balanzaDeComprobacion,
-      balanceGeneral: estados.balanceGeneral,
-    });
+    // 🧠 Generar nuevos estados contables
+    const estadosActualizados = generarEstadosContables(fecha, todosLosAsientos);
 
+    // 💾 Guardar nuevo estado contable
+    const nuevoDocumento = new EstadoContable(estadosActualizados);
     await nuevoDocumento.save();
 
-    // 6. Responder con el nuevo estado contable guardado
+    // ✅ Enviar respuesta
     res.status(201).json({
-      mensaje: "Estados contables generados y guardados correctamente",
+      mensaje: "Estados contables actualizados y guardados correctamente",
       data: nuevoDocumento,
     });
   } catch (error) {

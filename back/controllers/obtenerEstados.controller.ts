@@ -28,7 +28,6 @@ export const obtenerEstadoPorId = async (req: Request, res: Response) => {
       res.status(404).json({ mensaje: "Estado contable no encontrado" });
       return;
     }
-
     res.json({
       mensaje: "Estado contable encontrado",
       data: estado,

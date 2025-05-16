@@ -1,7 +1,6 @@
 interface AsientoReferencia {
-    concepto: string,
-    numero:number,
     descripcion:string,
-    fecha:string
+    fecha:string,
+    id:string
 }
 export type AsientoReferenciaType = AsientoReferencia

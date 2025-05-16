@@ -197,8 +197,6 @@ export const generarBalanceGeneral = (cuentas: Movimiento[]): BalanceGeneral => 
   return balance;
 };
 
-// ---------- Función Final: Estado Completo ----------
-
 const generarEstadosContables = (
   fecha: string,
   asientos: AsientoContable[]

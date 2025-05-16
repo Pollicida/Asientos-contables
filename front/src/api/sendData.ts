@@ -3,7 +3,7 @@ import { DataGeneralType } from "../types/DataGeneralType";
 
 export const sendData = async (asientos: DataGeneralType) => {
   try {
-    const response = await axios.post(`http://localhost:5000/asientos`, asientos, {
+    const response = await axios.post(`http://localhost:5000/asientos/postAsiento`, asientos, {
       headers: {
         "Content-Type": "application/json",
       }

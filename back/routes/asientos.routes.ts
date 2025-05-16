@@ -4,6 +4,7 @@ import { generarYGuardarEstados } from "../controllers/generarEstados.controller
 import { obtenerUltimoEstado } from "../controllers/obtenerEstados.controller";
 import { obtenerUltimosAsientosDeTodosLosEstados } from "../controllers/obtenerEstados.controller";
 import { obtenerEstadoPorId } from "../controllers/obtenerEstados.controller";
+import { generarEstadosFinancieros } from "../controllers/generarEstadosFinancieros.controller";
 
 const router = Router();
 
@@ -37,5 +38,7 @@ router.post(
     await generarYGuardarEstados(req, res);
   }
 );
+
+router.post("/generar", generarEstadosFinancieros);
 
 export default router;

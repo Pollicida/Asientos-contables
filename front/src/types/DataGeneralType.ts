@@ -1,16 +1,24 @@
-import { DataHeaderType } from "./DataHeaderType";
-import { AsientoType } from "./AsientosType";
-import { MayorType } from "./MayorType";
-import { BalanceType } from "./BalanceType";
+export type DataGeneralType = {
+  fecha: string;
+  libroDiario?: any; // Mejora esto según tu tipo real
+  libroMayor?: any;
+  balanceGeneral: {
+    header: {
+      numero: number;
+      descripcion: string;
+      fecha: string;
+      tipoAsiento: string;
+    };
+    totalActivos: number;
+    totalPasivos: number;
+    totalCapital: number;
+    detalle: {
+      activos: { concepto: string; valor: number }[];
+      pasivos: { concepto: string; valor: number }[];
+      capital: { concepto: string; valor: number }[];
+    };
+  };
+  mayor: any; // o el tipo de tu componente Mayor
+};
 
-interface DataGeneral {
-    dataHeader: DataHeaderType,
-    asiento: AsientoType,
-    mayor: MayorType,
-    balance: BalanceType
-}
-
-type DatasGenerales = DataGeneral[]
-
-export type DataGeneralType = DataGeneral
-export type DatasGeneralesType = DatasGenerales
+export type DatasGeneralesType = DataGeneralType[]

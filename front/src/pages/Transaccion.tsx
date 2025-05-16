@@ -3,14 +3,13 @@ import BalanceGeneralComponent from "../components/balanceGeneral"
 import CuentasTComponent from "../components/CuentasT";
 import Balanza from "../components/Balanza";
 import { useParams } from "react-router-dom";
-import { getOneAsiento } from "../api/getOneAsiento";
 import { DataGeneralType } from "../types/DataGeneralType";
 import { FormatearFecha } from "../utils/converterFecha";
 import generalDataExample from "../utils/DatosEjemplo/generalDataExample";
+import { getOneAsiento } from "../api/getOneAsiento";
 
 
 const Transaccion = () => {
-	// const balance1: BalanceGeneral = {
 	// 	header: {
 	// 		numero: 1,
 	// 		descripcion: "Balance General de la empresa tu cama 3B",
@@ -206,22 +205,28 @@ const Transaccion = () => {
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				const res = await getOneAsiento(Number(asiento));
-				setData(res);
-				console.log("Información: ", res);
+				const res = await getOneAsiento(asiento ?? "1");
+				setData(res.data);
 			} catch (error) {
-				console.error("Error al cargar el mayor:", error);
+				console.error("Error al cargar el asiento:", error);
 			}
 		};
-		fetchData();
-	}, []);
+		if (asiento) fetchData();
+	}, [asiento]);
 
+	useEffect(() => {
+		console.log("Información actualizada: ", data.libroMayor);
+	}, [data]);
+
+	if (!data || !data.balanceGeneral || !data.libroMayor) {
+		return <div className="flex justify-center items-center h-screen">Cargando...</div>;
+	}
 	return (
 		<div className="h-full min-w-screen flex flex-col">
 			<section className="flex-1 w-full overflow-auto">
-				{tipo == "Balance general" ? <BalanceGeneralComponent balance={data.balance} fecha={FormatearFecha(data.dataHeader.fecha)} />
-					: tipo == "Cuentas T" ? <CuentasTComponent mayorInput={data.mayor} />
-						: <div className="text-black"><Balanza fecha={FormatearFecha(data.dataHeader.fecha)} mayor={data.mayor} /></div>
+				{tipo == "Balance general" ? <BalanceGeneralComponent balance={data.balanceGeneral} fecha={FormatearFecha(data.fecha)} />
+					: tipo == "Cuentas T" ? <CuentasTComponent mayorInput={data.libroMayor} />
+						: <div className="text-black"><Balanza fecha={FormatearFecha(data.fecha)} mayor={data.libroMayor} /></div>
 				}
 			</section>
 			<footer className="px-5 min-h-[35px] bg-gray-200 text-gray-500 flex gap-3" style={{ boxShadow: '0px 0px 10px 1px #989A9C' }}>

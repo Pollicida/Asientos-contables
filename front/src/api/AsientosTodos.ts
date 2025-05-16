@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/asientos"; // Ajusta la URL según tu backend
+const API_URL = "http://localhost:5000/asientos/ultimosEstados"; // Ajusta la URL según tu backend
 
 export const getAllAsientos = async () => {
   try {

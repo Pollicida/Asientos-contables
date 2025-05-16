@@ -1,16 +1,12 @@
 import { useState } from "react";
 import cuentas from "../utils/opciones";
-import generarBalanceGeneral from "../utils/balance";
 import { opcionesAsientos } from "../utils/opciones";
 import { DataHeaderType } from "../types/DataHeaderType";
 import { BalanceType } from "../types/BalanceType";
-import { MayorType } from "../types/MayorType";
-import { DataGeneralType } from "../types/DataGeneralType";
-import generarCuentasT from "../utils/cuentasT";
 import { sendData } from "../api/sendData";
 import { AsientoType } from "../types/AsientosType";
 
-const AsientoTable = ({ balanceAnterior, numeroAsientoAnterior, mayorAnterior }: { balanceAnterior: BalanceType, numeroAsientoAnterior: number, mayorAnterior: MayorType }) => {
+const AsientoTable = ({ balanceAnterior, numeroAsientoAnterior}: { balanceAnterior: BalanceType, numeroAsientoAnterior: number}) => {
   const [rows, setRows] = useState<AsientoType>([{ concepto: "", debe: 0, haber: 0 }]);
   const [data, setData] = useState<DataHeaderType>({ numero: numeroAsientoAnterior, descripcion: "", fecha: new Date().toISOString().split("T")[0], tipoAsiento: '' });
   const [showAlert, setShowAlert] = useState(false);
@@ -85,20 +81,29 @@ const AsientoTable = ({ balanceAnterior, numeroAsientoAnterior, mayorAnterior }:
       }, 3000);
       return;
     }
-    if (!validateRows()) {
-      return;
+    if (balanceAnterior) {
+      if (!validateRows()) {
+        return;
+      }
     }
 
     setShowSave(true);
   }
 
   function handleConfirmSave() {
-    const datos: DataGeneralType = {
-      dataHeader: {...data, numero: numeroAsientoAnterior +   1},
-      asiento: rows,
-      balance: generarBalanceGeneral(rows, balanceAnterior),
-      mayor: generarCuentasT(data.numero, rows, mayorAnterior)
+    const datos: any = {
+      fecha: data.fecha,
+      asiento: {
+        fecha: data.fecha,
+        descripcion: data.descripcion,
+        movimientos: rows.map((row) => ({
+          cuenta: row.concepto,
+          debe: Number(row.debe),
+          haber: Number(row.haber),
+        })),
+      },
     };
+    console.log("Datos a enviar:", datos);
     sendData(datos);
     setShowSave(false);
   }
@@ -108,7 +113,7 @@ const AsientoTable = ({ balanceAnterior, numeroAsientoAnterior, mayorAnterior }:
       <div className="w-full h-[100px] bg-[#9a76c6] p-6 flex items-center text-white gap-4">
         <h1 className="text-2xl font-medium mr-6 ml-11 mb-1">Asientos</h1>
         <div className="p-2 border rounded-md appearance-none outline-none w-[70px]">
-          {numeroAsientoAnterior + 1}
+          {numeroAsientoAnterior ? numeroAsientoAnterior + 1 : 1}
         </div>
         <select
           value={data.tipoAsiento}
